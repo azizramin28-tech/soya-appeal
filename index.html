@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Soya Appeal</title>
+  <link rel="icon" href="soya-logo.png" type="image/png">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #0044cc);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: #2e2e3e;
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      width: 400px;
+      text-align: center;
+    }
+
+    .form-container img {
+      width: 100px;
+      margin-bottom: 1rem;
+    }
+
+    .form-container h2 {
+      margin-bottom: 1.5rem;
+      font-size: 24px;
+      color: #ffffff;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: none;
+      background: #444;
+      color: white;
+      font-size: 14px;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #aaa;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background: #6a00cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #8a2be2;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <img src="soya-logo.png" alt="SOYA Logo" />
+    <h2>Soya Appeal</h2>
+
+    <input type="text" id="discordID" placeholder="Discord ID" />
+    <input type="text" id="banReason" placeholder="Ban Reason" />
+    <textarea id="appealText" rows="4" placeholder="Why should you be unbanned?"></textarea>
+
+    <button onclick="sendAppeal()">Submit Appeal</button>
+  </div>
+
+  <script>
+    async function sendAppeal() {
+      const discordID = document.getElementById('discordID').value.trim();
+      const banReason = document.getElementById('banReason').value.trim();
+      const appealText = document.getElementById('appealText').value.trim();
+
+      if (!discordID || !banReason || !appealText) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      // IMPORTANT: This sends the appeal to your Node.js bot
+      const apiURL = "http://localhost:3000/appeal";
+      // Wenn du es auf einem anderen Gerät öffnest:
+      // const apiURL = "http://DEINE-IP:3000/appeal";
+
+      const payload = {
+        discordID,
+        banReason,
+        appealText
+      };
+
+      try {
+        const res = await fetch(apiURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          alert("Error sending appeal.");
+          return;
+        }
+
+        alert("Appeal sent successfully!");
+        document.getElementById('discordID').value = "";
+        document.getElementById('banReason').value = "";
+        document.getElementById('appealText').value = "";
+      } catch (error) {
+        alert("Could not reach the appeal server.");
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
